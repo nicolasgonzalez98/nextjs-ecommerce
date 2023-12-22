@@ -20,7 +20,7 @@ export default function Layout({children}) {
       <div className="bg-blue-900 min-h-screen flex">
         <Nav/>
 
-        <div className="bg-white flex-grow mt-2 mr-2 rounded-lg p-4 mb-2">{children}<button onClick={() => signOut()}>Sign out</button></div>
+        <div className="bg-white flex-grow mt-2 mr-2 rounded-lg p-4 mb-2">{children}</div>
         
       </div>
     )
