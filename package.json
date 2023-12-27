@@ -13,6 +13,7 @@
     "autoprefixer": "^10.4.16",
     "axios": "^1.6.2",
     "mongodb": "4.1",
+    "mongoose": "^8.0.3",
     "next": "13.2.3",
     "next-auth": "^4.24.5",
     "postcss": "^8.4.32",
