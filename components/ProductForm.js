@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 
 import { useState } from "react";
 import Spinner from "./Spinner";
+import { ReactSortable } from "react-sortablejs";
 
 
 export default function ProductForm({
@@ -70,6 +71,10 @@ export default function ProductForm({
 
         }
 
+        function updateImagesOrder(images){
+            setImages(images)
+        }
+
         return (
             <form onSubmit={saveProduct}>
                 
@@ -77,12 +82,14 @@ export default function ProductForm({
                 <input type="text" placeholder="Product Name" value={title} onChange={e => setTitle(e.target.value)}/>
                 <label>Photos</label>
                 <div className="mb-2 flex flex-wrap gap-2">
-                    {!!images?.length && images.map(link => (
-                        <div key={link} className="h-24 ">
-                            <img src={link} alt="" className="rounded-lg"/>
-                        </div>
-                        
-                    ))}
+                    <ReactSortable list={images} setList={updateImagesOrder} className="flex flex-wrap gap-2">
+                        {!!images?.length && images.map(link => (
+                            <div key={link} className="h-24 ">
+                                <img src={link} alt="" className="rounded-lg"/>
+                            </div>
+                            
+                        ))}
+                    </ReactSortable>
                     {isUploading && (
                         <div className="h-24 p-1 bg-gray-200 flex items-center">
                             <Spinner />
