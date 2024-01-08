@@ -9,17 +9,17 @@ export default function EditProduct(){
     const [productInfo, setProductInfo] = useState(null)
     const router = useRouter()
     const {id} = router.query
-    const [title, setTitle] = useState("");
-    const [description, setDescription] = useState("");
-    const [price, setPrice] = useState("");
-    const [goToProducts, setGoToProducts] = useState(false);
+    
     
 
     useEffect(() => {
-        axios.get("/api/products?id="+id)
-        .then((res) => {
-            setProductInfo(res.data)
-        })
+        if(id){
+            axios.get("/api/products?id="+id)
+            .then((res) => {
+                setProductInfo(res.data)
+            })
+        }
+        
     }, [id])
 
     return (
