@@ -1,14 +1,16 @@
 import Layout from "@/components/Layout";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { withSwal } from "react-sweetalert2";
 
-export default function CategoriesPage(){
+function CategoriesPage({swal}){
 
     const [editedCategory, setEditedCategory] = useState(null)
     const [name, setName] = useState("")
     const [parentCategory, setParentCategory] = useState("")
     const [categories, setCategories] = useState(null)
-    
+    const [properties, setProperties] = useState([])
+    const [property, setProperty] = useState({name:"", values:""})
 
     async function saveCategory(e){
         e.preventDefault();
@@ -28,8 +30,50 @@ export default function CategoriesPage(){
     function editCategory(category){
         setEditedCategory(category)
         setName(category.name)
-        setParentCategory(category.parent?._id)
+        setParentCategory(category.parent?._id || "0")
         
+    }
+
+    function deleteCategory(category){
+        swal.fire({
+            title: 'Are you sure?',
+            text: 'Do you want to delete'+category.name+"?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: "#d55",
+            
+            confirmButtonText: "Yes, delete",
+            cancelButtonText: "Cancel",
+            reverseButtons: true
+        }
+        ).then((result) => {
+            if (result.isConfirmed) {
+              axios.delete("/api/categories?id="+category._id)
+              .then(
+                swal.fire({
+                    title: "Deleted!",
+                    text: "Your category has been deleted.",
+                    icon: "success"
+                  })
+              )
+              .then(
+                fetchCategories()
+              )
+            }
+          });
+    }
+
+    function addProperty(){
+        setProperties(prev => {
+            return [...prev, property]
+        })
+    }
+
+    function cancelEdit(e){
+        e.preventDefault()
+        setEditedCategory(null)
+        setName("");
+        setParentCategory("")
     }
 
     function fetchCategories(){
@@ -52,30 +96,53 @@ export default function CategoriesPage(){
                     `Edit category ${editedCategory.name}`:
                     "New category name"}
             </label>
-            <form onSubmit={saveCategory} className="flex gap-1">
-                <input 
-                className="mb-0" 
-                type="text" 
-                placeholder="Category name"
-                value={name}
-                onChange={e => setName(e.target.value)}
-                />
-                <select className="mb-0"
-                        value={parentCategory}
-                        onChange={e => setParentCategory(e.target.value)}
-                >
-                    <option value="0">No parent category.</option>
-                    {categories && (
-                        categories.map(i => (
-                            <option key={i._id} value={i._id}>{i.name}</option>
-                        ))
-                    )
+            <form onSubmit={saveCategory} >
+                <div className="flex gap-1">
+                    <input 
                     
+                    type="text" 
+                    placeholder="Category name"
+                    value={name}
+                    onChange={e => setName(e.target.value)}
+                    />
+                    <select 
+                            value={parentCategory}
+                            onChange={e => setParentCategory(e.target.value)}
+                    >
+                        <option value="0">No parent category.</option>
+                        {categories && (
+                            categories.map(i => (
+                                <option key={i._id} value={i._id}>{i.name}</option>
+                            ))
+                        )
+                        
+                        }
+                    </select>
+                </div>
+                <div className="mb-1">
+                    <label className="block">Properties</label>
+                    <button 
+                        type="button" 
+                        className="btn-default text-sm"
+                        onClick={addProperty}>
+                            Add new property
+                    </button>
+                    {
+                        properties.length > 0 && properties.map(p => (
+                            <div key="1" className="flex gap-1">
+                                <input type="text" placeholder="property name"/>
+                            </div>
+                        ))
                     }
-                </select>
-                <button type="submit" className="btn-primary py-1">Save</button>
+                </div>
+                
+                
+                <button type="submit" className="btn-primary mr-1">{editedCategory ? "Edit" : "Save"}</button>
+                <button onClick={cancelEdit} className="btn-primary py-1">Cancel</button> 
             </form>
-
+            
+            
+            
             {
                 categories ? (
                     <table className="basic mt-4">
@@ -96,9 +163,9 @@ export default function CategoriesPage(){
                                             
                                             Edit
                                         </button>
-                                        <button className="btn-primary mr-1">
-                                            
-
+                                        <button 
+                                        onClick={() => deleteCategory(i)}
+                                        className="btn-primary mr-1">
                                                 Delete
                                         </button>
                                         
@@ -118,3 +185,7 @@ export default function CategoriesPage(){
         </Layout>
     )
 }
+
+export default withSwal(({swal}, ref) => (
+    <CategoriesPage swal={swal}/>
+))

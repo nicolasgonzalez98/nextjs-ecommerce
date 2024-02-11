@@ -16,6 +16,7 @@ export default function EditProduct(){
         if(id){
             axios.get("/api/products?id="+id)
             .then((res) => {
+                console.log(res)
                 setProductInfo(res.data)
             })
         }

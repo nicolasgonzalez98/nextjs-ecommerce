@@ -2,7 +2,7 @@ import axios from "axios";
 
 import { useRouter } from "next/router";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Spinner from "./Spinner";
 import { ReactSortable } from "react-sortablejs";
 
@@ -12,7 +12,8 @@ export default function ProductForm({
     title: existingTitle, 
     description: existingDescription, 
     price: existingPrice,
-    images: existingImages
+    images: existingImages,
+    category: existingCategory
 }){
         
         const [title, setTitle] = useState(existingTitle || "");
@@ -21,11 +22,16 @@ export default function ProductForm({
         const [images, setImages] = useState(existingImages || []);
         const [goToProducts, setGoToProducts] = useState(false);
         const [isUploading, setIsUploading] = useState(false)
+        //Categories
+        const [parentCategory, setParentCategory] = useState(existingCategory || "")
+        const [categories, setCategories] = useState(null)
+        //
         const router = useRouter();
 
         async function saveProduct(e) {
             e.preventDefault();
-            const data = {title, description, price, images};
+            const data = {title, description, price, images, category: parentCategory};
+            console.log(data)
             if (_id){
                 await axios.put("/api/products", {...data, _id})
             }else{
@@ -34,6 +40,13 @@ export default function ProductForm({
             setGoToProducts(true)
             
 
+        }
+
+        function fetchCategories(){
+            axios.get("/api/categories")
+            .then(res => {
+                setCategories(res.data)
+            })
         }
 
         if(goToProducts){
@@ -75,11 +88,30 @@ export default function ProductForm({
             setImages(images)
         }
 
+        useEffect(() => {
+            fetchCategories()
+        }, [])
+
         return (
             <form onSubmit={saveProduct}>
                 
                 <label>Product name</label>
                 <input type="text" placeholder="Product Name" value={title} onChange={e => setTitle(e.target.value)}/>
+                <label>Category</label>
+                <select
+                    className="mb-0"
+                    value={parentCategory}
+                    onChange={e => setParentCategory(e.target.value)}
+                >
+                    <option value="0">No parent category.</option>
+                        {categories && (
+                            categories.map(i => (
+                                <option key={i._id} value={i._id}>{i.name}</option>
+                            ))
+                        )
+                        
+                        }
+                </select>
                 <label>Photos</label>
                 <div className="mb-2 flex flex-wrap gap-2">
                     <ReactSortable list={images} setList={updateImagesOrder} className="flex flex-wrap gap-2">

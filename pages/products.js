@@ -10,8 +10,9 @@ export default function Products(){
     useEffect(() => {
         axios.get("/api/products")
         .then(res => {
-            setProducts(res.data)
             
+            setProducts(res.data)
+            console.log(products)
         })
     }, []);
 
@@ -25,13 +26,15 @@ export default function Products(){
                         <thead>
                             <tr>
                                 <td>Product Name</td>
+                                <td>Category name</td>
                                 <td></td>
                             </tr>
                         </thead>
                         <tbody>
-                            {products.map(i => (
+                            {products?.map(i => (
                                 <tr key={i._id}>
                                     <td>{i.title}</td>
+                                    <td>{i?.category?.name}</td>
                                     <td>
                                         <Link href={'/products/edit/'+i._id}>
                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">

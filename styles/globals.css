@@ -27,6 +27,19 @@ label{
     @apply text-white rounded-md bg-blue-900 px-4 py-2 mt-2;
 }
 
+.btn-default, .btn-red{
+    @apply px-4 py-1 rounded-md;
+}
+
+.btn-default{
+    @apply bg-gray-500 text-white;
+}
+
+.btn-red{
+    @apply bg-red-800 text-white;
+}
+
+
 .btn-primary:hover{
     @apply text-blue-900 bg-gray-200;
 }
