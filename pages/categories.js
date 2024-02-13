@@ -31,7 +31,7 @@ function CategoriesPage({swal}){
         setEditedCategory(category)
         setName(category.name)
         setParentCategory(category.parent?._id || "0")
-        
+        setProperties([])
     }
 
     function deleteCategory(category){
@@ -65,7 +65,7 @@ function CategoriesPage({swal}){
 
     function addProperty(){
         setProperties(prev => {
-            return [...prev, property]
+            return [...prev, {name:"", values:""}]
         })
     }
 
@@ -80,6 +80,30 @@ function CategoriesPage({swal}){
         axios.get("/api/categories")
         .then(res => {
             setCategories(res.data)
+        })
+    }
+
+    function handlePropertyNameChange(index,category, value){
+        setProperties(prev => {
+            
+            const properties = [...prev]
+            
+            if(category=="name"){
+                properties[index].name = value
+            }else if(category=="values"){
+                properties[index].values = value
+            }
+            return properties
+            
+        })
+    }
+
+    function removePropertie(e, index){
+        e.preventDefault()
+        setProperties(prev => {
+            return prev.filter((p, pi) => {
+                return pi !== index
+            }) ;
         })
     }
 
@@ -123,14 +147,26 @@ function CategoriesPage({swal}){
                     <label className="block">Properties</label>
                     <button 
                         type="button" 
-                        className="btn-default text-sm"
+                        className="btn-default text-sm mb-1"
                         onClick={addProperty}>
                             Add new property
                     </button>
                     {
-                        properties.length > 0 && properties.map(p => (
-                            <div key="1" className="flex gap-1">
-                                <input type="text" placeholder="property name"/>
+                        properties.length > 0 && properties.map((p, i) => (
+                            <div key={i} className="flex gap-1 mb-2">
+                                <input type="text"
+                                    onChange={(e) => handlePropertyNameChange(i,"name", e.target.value)}
+                                    className="mb-0"
+                                    value={p.name} 
+                                    placeholder="property name"
+                                />
+                                <input type="text"
+                                    onChange={(e) => handlePropertyNameChange(i,"values", e.target.value)}
+                                    className="mb-0"
+                                    value={p.values} 
+                                    placeholder="values, " 
+                                />
+                                <button onClick={(e) => removePropertie(e, i)} className="btn-default text-sm">Remove</button>
                             </div>
                         ))
                     }
@@ -143,9 +179,9 @@ function CategoriesPage({swal}){
             
             
             
-            {
-                categories ? (
-                    <table className="basic mt-4">
+            
+                    {!editedCategory && (
+                        <table className="basic mt-4">
                         <thead>
                             <tr>
                                 <td>Category name</td>
@@ -175,10 +211,7 @@ function CategoriesPage({swal}){
                             )}
                         </tbody>
                     </table>
-                ) :
-                <p>Cargando...</p>
-                
-            }
+                )}
 
             
             
