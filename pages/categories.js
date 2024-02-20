@@ -14,7 +14,10 @@ function CategoriesPage({swal}){
 
     async function saveCategory(e){
         e.preventDefault();
-        const data = {name, parentCategory}
+        const data = {name, 
+            parentCategory, 
+            properties: properties.map(p => ({name:p.name, values:p.values.split(",")}))
+        }
         if(editedCategory){
             await axios.put("/api/categories", {...data, _id: editedCategory._id})
             setEditedCategory(null)
@@ -24,6 +27,8 @@ function CategoriesPage({swal}){
         }
         setName("");
         setParentCategory("")
+        setProperties([])
+        setProperty({name:"", values:""})
         fetchCategories();
     }
 
@@ -31,7 +36,9 @@ function CategoriesPage({swal}){
         setEditedCategory(category)
         setName(category.name)
         setParentCategory(category.parent?._id || "0")
-        setProperties([])
+        setProperties(category.properties.map(({name, values}) => (
+            {name, values: values.join(",")}
+        )))
     }
 
     function deleteCategory(category){
@@ -74,6 +81,8 @@ function CategoriesPage({swal}){
         setEditedCategory(null)
         setName("");
         setParentCategory("")
+        setProperties([])
+        setProperty({name:"", values:""})
     }
 
     function fetchCategories(){
@@ -174,7 +183,10 @@ function CategoriesPage({swal}){
                 
                 
                 <button type="submit" className="btn-primary mr-1">{editedCategory ? "Edit" : "Save"}</button>
-                <button onClick={cancelEdit} className="btn-primary py-1">Cancel</button> 
+                {editedCategory && (
+                    <button onClick={cancelEdit} className="btn-primary py-1">Cancel</button> 
+                )}
+                
             </form>
             
             
@@ -190,7 +202,8 @@ function CategoriesPage({swal}){
                             </tr>
                         </thead>
                         <tbody>
-                            {categories.map(i => (
+                        
+                            {categories?.map(i => (
                                 <tr key={i._id}>
                                     <td>{i.name}</td>
                                     <td>{i?.parent?.name}</td>
@@ -209,6 +222,7 @@ function CategoriesPage({swal}){
                                 </tr>
                             )
                             )}
+                        
                         </tbody>
                     </table>
                 )}
