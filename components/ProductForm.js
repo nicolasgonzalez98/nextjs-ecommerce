@@ -106,8 +106,11 @@ export default function ProductForm({
 
         if (categories.length > 0 && category) {
             let catInfo = categories.find(({_id}) => _id === category);
-            propertiesToFill.push(...catInfo.properties);
-            console.log(propertiesToFill)
+            if (catInfo){
+                propertiesToFill.push(...catInfo.properties);
+                console.log(propertiesToFill)
+            }
+            
             // while(catInfo?.parent?._id) {
             //   const parentCat = categories.find(({_id}) => _id === catInfo?.parent?._id);
             //   propertiesToFill.push(...parentCat.properties);

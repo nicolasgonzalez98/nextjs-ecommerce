@@ -18,11 +18,11 @@ export default function Products(){
 
     return (
         <Layout>
-            <Link className="bg-blue-800 rounded-md py-1 px-2 text-white" href="/products/new">Add new product</Link>
+            <Link className="btn-primary" href="/products/new">Add new product</Link>
 
             {
                 products ? (
-                    <table className="basic mt-2">
+                    <table className="basic mt-3">
                         <thead>
                             <tr>
                                 <td>Product Name</td>
