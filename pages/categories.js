@@ -208,13 +208,13 @@ function CategoriesPage({swal}){
                                     <td>{i.name}</td>
                                     <td>{i?.parent?.name}</td>
                                     <td>
-                                        <button onClick={() => editCategory(i)} className="btn-primary mr-1">
+                                        <button onClick={() => editCategory(i)} className="btn-default mr-1">
                                             
                                             Edit
                                         </button>
                                         <button 
                                         onClick={() => deleteCategory(i)}
-                                        className="btn-primary mr-1">
+                                        className="btn-red mr-1">
                                                 Delete
                                         </button>
                                         
